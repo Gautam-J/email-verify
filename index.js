@@ -1,15 +1,24 @@
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
-const connectToDB = require("./database/db");
+const mongodb = require("mongodb");
 
 const app = express();
-
-connectToDB();
 
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(cors());
+
+require("dotenv").config();
+
+const MongoClient = mongodb.MongoClient;
+const uri = process.env.MONGODB_URI;
+let db;
+
+MongoClient.connect(uri, (err, client) => {
+  if (err) return console.error(err);
+  db = client.db("email_db");
+});
 
 // default empty route to check API
 app.get("/", (req, res) => {
@@ -17,8 +26,18 @@ app.get("/", (req, res) => {
 });
 
 // check authorization of email
-app.post("/verify", (req, res) => {
-  res.send("Verify");
+app.get("/verify", async (req, res) => {
+  try {
+    const { email } = req.body;
+    const existingEmail = await db.collection("Email").findOne({ email });
+    if (!existingEmail) {
+      return res.status(401).json({ msg: "Not Verified" });
+    }
+    res.json({ msg: "Verified" });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
 });
 
 // either PORT env variable or 4000
