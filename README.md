@@ -6,18 +6,6 @@
 -   `npm install`
 -   `npm start`
 
-### Document Structure in MongoDB
-
--   Database name - `email_db`.
--   Collection name - `Email`.
-
-```json
-{
-    ObjectID: id,
-    email: example@company.com
-}
-```
-
 ### API Route
 
 GET - `/verify`
@@ -26,7 +14,7 @@ Body
 
 ```json
 {
-    email: example@company.com
+    "jwt": "Access Token"
 }
 ```
 
@@ -34,14 +22,8 @@ Body
 
 ```json
 {
-    msg: Verified
+    "msg": "Data stored"
 }
 ```
 
-401- Not Verified
-
-```json
-{
-    msg: Not Verified
-}
-```
+500 - Internal Server Error
