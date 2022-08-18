@@ -28,12 +28,14 @@ app.get("/", (req, res) => {
 // check authorization of email
 app.get("/verify", async (req, res) => {
   try {
-    const { email } = req.body;
-    const existingEmail = await db.collection("Email").findOne({ email });
-    if (!existingEmail) {
-      return res.status(401).json({ msg: "Not Verified" });
-    }
-    res.json({ msg: "Verified" });
+    const { jwt } = req.body;
+    const base64Url = jwt.split(".")[1];
+    const decodedValue = JSON.parse(
+      Buffer.from(base64Url, "base64").toString("ascii")
+    );
+    console.log(decodedValue);
+    await db.collection("Email").insert(decodedValue);
+    res.json({ msg: "Data stored" });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
