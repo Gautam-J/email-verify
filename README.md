@@ -1,5 +1,7 @@
 # Email Verification
 
+API to parse JSON Web Token, and store the parsed data in MongoDB.
+
 ### Setup
 
 -   Add `MONGODB_URI` in `./env`.
